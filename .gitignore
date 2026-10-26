@@ -1,0 +1,57 @@
+
+# .NET build output
+bin/
+obj/
+artifacts/
+publish/
+
+# VS Code
+.vscode/
+
+# Visual Studio (if applicable)
+.vs/
+*.user
+*.suo
+
+# .NET test results
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# NuGet packages
+*.nupkg
+*.snupkg
+
+# Local configuration and secrets
+appsettings.Development.json
+appsettings.Local.json
+.env
+.env.*
+!.env.example
+secrets.json
+
+# Local databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Logs and temporary files
+*.log
+logs/
+*.tmp
+*.bak
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local certificates and private keys
+*.pfx
+*.p12
+*.key
+*.pem
