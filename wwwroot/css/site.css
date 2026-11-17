@@ -12,13 +12,41 @@ html {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
+/* ============================================================
+   BulkyBook Theme — "Modern Library"
+   Reusable design tokens for the whole application.
+   ============================================================ */
+:root {
+  --bb-primary: #4f46e5;        /* Indigo  — buttons, links, accents */
+  --bb-primary-dark: #4338ca;
+  --bb-accent: #f59e0b;         /* Amber   — highlights, badges */
+  --bb-ink: #0f172a;            /* Slate   — dark surfaces, headings */
+  --bb-ink-soft: #1e293b;
+  --bb-surface: #f8fafc;        /* Light backgrounds, cards */
+  --bb-text-muted: #94a3b8;
+  --bb-radius: 14px;
+  --bb-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+
+  /* Map Bootstrap's primary onto the theme so utilities like
+     text-primary / bg-primary / btn-primary use the theme colors. */
+  --bs-primary: #4f46e5;
+  --bs-primary-rgb: 79, 70, 229;
+  --bs-warning-rgb: 245, 158, 11;
+}
+
 html {
   position: relative;
   min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body > .container {
+  flex: 1 0 auto;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -28,4 +56,61 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+/* ============================================================
+   Footer — dark "Ink" surface with subtle gradient
+   ============================================================ */
+.site-footer {
+  flex-shrink: 0;
+  margin-top: 3rem;
+  background:
+    radial-gradient(ellipse 80% 120% at 90% -20%, rgba(79, 70, 229, 0.35), transparent 60%),
+    radial-gradient(ellipse 60% 100% at 5% 110%, rgba(245, 158, 11, 0.12), transparent 60%),
+    var(--bb-ink);
+  color: #cbd5e1;
+}
+
+.site-footer .footer-brand {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.site-footer .footer-brand .bi {
+  color: var(--bb-accent);
+}
+
+.site-footer .footer-slogan {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--bb-text-muted);
+  letter-spacing: normal;
+}
+
+.site-footer .footer-copy {
+  font-size: 0.85rem;
+  color: var(--bb-text-muted);
+}
+
+.site-footer .footer-social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.site-footer .footer-social a:hover,
+.site-footer .footer-social a:focus {
+  background: var(--bb-primary);
+  color: #fff;
+  transform: translateY(-3px);
 }
