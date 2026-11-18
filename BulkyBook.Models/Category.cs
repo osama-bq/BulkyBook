@@ -9,6 +9,6 @@ namespace BulkyBook.Models
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
         [Range(0, 100, ErrorMessage = "Display Order must be between 0 and 100.")]
-        public int? DisplayOrder { get; set; }
+        public int DisplayOrder { get; set; }
     }
 }

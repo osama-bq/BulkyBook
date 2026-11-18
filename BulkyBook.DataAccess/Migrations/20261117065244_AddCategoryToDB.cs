@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace BulkyBook.Migrations
+namespace BulkyBook.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class AddCategoryToDB : Migration
