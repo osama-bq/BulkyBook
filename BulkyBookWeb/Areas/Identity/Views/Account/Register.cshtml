@@ -1,0 +1,113 @@
+@using BulkyBook.Models.ViewModels
+@model RegisterVM
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="row justify-content-center my-4 my-md-5">
+    <div class="col-md-8 col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="auth-header text-center text-white px-4 py-4">
+                <i class="bi bi-person-plus-fill display-4 text-warning"></i>
+                <h1 class="h4 fw-bold mt-2 mb-1">Create Account</h1>
+                <p class="mb-0 small text-white-50">Join us today</p>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <form method="post" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Name" class="form-label fw-medium">Name</label>
+                            <input asp-for="Name" type="text" class="form-control form-control-lg" id="Name"
+                                   placeholder="John Doe"/>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label fw-medium">Email</label>
+                            <input asp-for="Email" type="email" class="form-control form-control-lg" id="Email"
+                                   placeholder="name@example.com"/>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Password" class="form-label fw-medium">Password</label>
+                            <input asp-for="Password" type="password" class="form-control" id="Password"
+                                   placeholder="••••••••"/>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label fw-medium">Confirm Password</label>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" id="ConfirmPassword"
+                                   placeholder="••••••••"/>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label fw-medium">Phone Number</label>
+                        <input asp-for="PhoneNumber" type="tel" class="form-control" id="PhoneNumber"
+                               placeholder="(123) 456-7890"/>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="StreetAddress" class="form-label fw-medium">Street Address</label>
+                        <input asp-for="StreetAddress" type="text" class="form-control" id="StreetAddress"
+                               placeholder="123 Main St"/>
+                        <span asp-validation-for="StreetAddress" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5 mb-3">
+                            <label asp-for="City" class="form-label fw-medium" for="City">City</label>
+                            <input asp-for="City" type="text" class="form-control" id="City" placeholder="New York"/>
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="State" class="form-label fw-medium" for="State">State</label>
+                            <input asp-for="State" type="text" class="form-control" id="State" placeholder="NY"/>
+                            <span asp-validation-for="State" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="PostalCode" class="form-label fw-medium">Postal Code</label>
+                            <input asp-for="PostalCode" type="text" class="form-control" id="PostalCode"
+                                   placeholder="10001"/>
+                            <span asp-validation-for="PostalCode" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-12 mb-3">
+                            <label asp-for="Role" class="form-label fw-medium">Postal Code</label>
+                            <select asp-for="Role" asp-items="@Model.RoleList" class="form-control">
+                                <option disabled selected>- Select Role -</option>
+                            </select>
+                            <span asp-validation-for="Role" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mb-3 mt-1">
+                        <i class="bi bi-person-check me-2"></i> Register
+                    </button>
+                </form>
+
+                <hr class="my-4" />
+
+                <p class="text-center mb-0">
+                    Already have an account?
+                    <a asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" class="fw-semibold text-decoration-none">Log in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+}

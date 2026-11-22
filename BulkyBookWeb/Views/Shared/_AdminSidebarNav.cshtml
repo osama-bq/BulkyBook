@@ -1,0 +1,64 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+<aside class="offcanvas-lg offcanvas-start admin-sidebar" tabindex="-1" id="adminSidebar"
+       aria-labelledby="adminSidebarLabel">
+    <div class="admin-sidebar-inner">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-white" id="adminSidebarLabel">Menu</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                    data-bs-target="#adminSidebar" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body d-flex flex-column flex-grow-1 p-0">
+            <a class="admin-brand d-flex align-items-center gap-2 px-4 py-4 text-decoration-none"
+               asp-area="Admin" asp-controller="Product" asp-action="Index">
+                <i class="bi bi-book-half fs-4"></i>
+                <span class="fs-5 fw-bold text-white">BulkyBook</span>
+                <span class="admin-badge">Admin</span>
+            </a>
+
+            <nav class="nav flex-column admin-nav px-3">
+                <p class="admin-section-label">Overview</p>
+                <a class="nav-link" href="#">
+                    <i class="bi bi-graph-up"></i> Dashboard
+                </a>
+
+                <p class="admin-section-label">Commerce</p>
+                <a class="nav-link" href="#">
+                    <i class="bi bi-bag"></i> Orders
+                </a>
+                <a class="nav-link @(currentController == "Product" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Product" asp-action="Index">
+                    <i class="bi bi-journal-text"></i> Products
+                </a>
+                <a class="nav-link @(currentController == "Category" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Category" asp-action="Index">
+                    <i class="bi bi-tags"></i> Categories
+                </a>
+
+                <p class="admin-section-label">Management</p>
+                <a class="nav-link" href="#">
+                    <i class="bi bi-people"></i> Users
+                </a>
+            </nav>
+
+            <div class="admin-sidebar-footer mt-auto px-3 pb-4">
+                <div class="admin-user d-flex align-items-center gap-2 py-3">
+                    <i class="bi bi-person-circle"></i>
+                    <span class="text-truncate">@(User.Identity?.Name ?? "Admin")</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-outline-light btn-sm flex-grow-1 rounded-pill"
+                       asp-area="Customer" asp-controller="Home" asp-action="Index">
+                        <i class="bi bi-shop me-1"></i> Store
+                    </a>
+                    <a class="btn btn-outline-danger btn-sm rounded-pill px-3" title="Log out"
+                       asp-area="Identity" asp-controller="Account" asp-action="Logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>

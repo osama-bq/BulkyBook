@@ -1,0 +1,35 @@
+@using BulkyBook.Models
+
+@model List<Product>
+    
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <h1 class="fw-bold mb-0">
+        Product List
+    </h1>
+    <a asp-controller="Product" asp-action="Upsert" class="btn btn-primary rounded-pill px-4 shadow-sm">
+        <i class="bi bi-plus-circle me-1"></i> New Product
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table id="tblData" class="table table-hover align-middle mb-0">
+                <thead class="text-uppercase small text-muted">
+                    <tr>
+                        <th class="ps-4 py-3" scope="col">Product Name</th>
+                        <th class="ps-4 py-3" scope="col">ISBN</th>
+                        <th class="ps-4 py-3" scope="col">Price</th>
+                        <th class="ps-4 py-3" scope="col">Author</th>
+                        <th class="ps-4 py-3" scope="col">Category</th>
+                        <th class="pe-4 py-3 text-end" scope="col">Actions</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/products.js" asp-append-version="true"></script>
+}

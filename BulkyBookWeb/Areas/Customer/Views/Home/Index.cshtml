@@ -1,8 +1,68 @@
-﻿@{
+﻿@using BulkyBook.Models
+@model IEnumerable<Product>
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<partial name="_Hero"/>
+
+<!-- ============================= CATALOG ============================= -->
+<section id="catalog" class="mb-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Our Collection</h2>
+            <p class="text-secondary mb-0">Explore all @Model.Count() books in our catalog</p>
+        </div>
+        <a href="#" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+            View All <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            <!-- ==============================================================
+            CATALOG PLACEHOLDER
+            Replace this single sample card with your Razor loop.
+            Each iteration should render one <div class="col">...</div>.
+            ============================================================== -->
+            @foreach (var product in Model)
+            {
+                <div class="col">
+                    <div class="card product-card h-100 border-0 shadow-sm rounded-4">
+                        <div class="product-cover d-flex align-items-center justify-content-center rounded-top-4">
+                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                            {
+                                <img src="@product.ImageUrl" alt="Book cover" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-image"></i>
+                            }
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis align-self-start mb-2">
+                                @product.Category.Name
+                            </span>
+                            <h6 class="card-title fw-semibold mb-1">@product.Title</h6>
+                            <p class="text-secondary small mb-3">by @product.Author</p>
+                            <div class="mt-auto d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="fw-bold text-primary">@product.Price100.ToString("c")</span>
+                                    @if (product.ListPrice > product.Price100)
+                                    {
+                                        <small class="text-decoration-line-through text-muted ms-1">@product.ListPrice.ToString("c")</small>
+                                    }
+                                </div>
+                                <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-sm btn-outline-primary rounded-pill px-3">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <!-- ========================== END PLACEHOLDER ========================== -->
+        </div>
+    }
+</section>
+
+<partial name="_Newsletter"/>

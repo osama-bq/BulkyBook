@@ -33,13 +33,11 @@
                                 <span class="text-primary-emphasis">@category.DisplayOrder</span>
                             </td>
                             <td class="pe-4 text-end">
-                                <a asp-controller="Category" asp-action="Update" asp-route-id="@category.Id"
-                                   class="btn btn-outline-primary btn-sm rounded-pill px-3 me-1" role="button">
-                                    <i class="bi bi-pencil me-1"></i> Edit
+                                <a asp-action="Update" asp-route-id="@category.Id" class="btn btn-sm btn-outline-success">
+                                    <i class="bi bi-pencil-square"></i> Edit
                                 </a>
-                                <a asp-controller="Category" asp-action="Delete" asp-route-id="@category.Id"
-                                   class="btn btn-outline-danger btn-sm rounded-pill px-3" role="button">
-                                    <i class="bi bi-trash me-1"></i> Delete
+                                <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Delete
                                 </a>
                             </td>
                         </tr>

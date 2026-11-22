@@ -1,0 +1,192 @@
+@using BulkyBook.Models.ViewModels;
+@model ShoppingCartVM
+@{
+    var itemCount = Model.ShoppingCartList.Count();
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="mb-3">
+    <a asp-area="Customer" asp-controller="Home" asp-action="Index"
+       class="text-decoration-none text-secondary small fw-medium d-inline-flex align-items-center gap-1">
+        <i class="bi bi-arrow-left"></i> Continue Shopping
+    </a>
+</div>
+
+<div class="row g-4">
+
+    <!-- ============================ CART ITEMS ============================ -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="cart-panel-header d-flex align-items-center justify-content-between px-4 py-3">
+                <h2 class="h5 fw-bold mb-0">
+                    <i class="bi bi-bag me-2"></i>Your Items
+                </h2>
+                <span class="badge rounded-pill bg-white text-dark">@itemCount</span>
+            </div>
+            
+            @if (itemCount == 0)
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-cart-x display-4 text-secondary"></i>
+                    <p class="text-secondary mt-3 mb-0">Your cart is empty</p>
+                </div>
+            }
+            else
+            {
+                <div class="card-body p-0">
+                    @foreach (var item in Model.ShoppingCartList)
+                    {
+                        <div class="cart-item d-flex gap-3 p-3 p-md-4">
+                            <div class="cart-thumb rounded-3 d-flex align-items-center justify-content-center">
+                                @if (string.IsNullOrEmpty(item.Product.ImageUrl))
+                                {
+                                    <i class="bi bi-image"></i>
+                                }
+                                else
+                                {
+                                    <img src="@item.Product.ImageUrl" alt="@item.Product.Title" class="w-100 h-100"/>
+                                }
+                            </div>
+
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start gap-3">
+                                    <div>
+                                        <a href="#" class="fw-semibold text-decoration-none text-dark">@item.Product.Title</a>
+                                        <p class="text-secondary small mb-0">
+                                            by @item.Product.Author
+                                            <span class="text-muted mx-1">&middot;</span>
+                                            @item.Price.ToString("c") each
+                                        </p>
+                                    </div>
+                                    <span class="fw-bold text-nowrap">@((item.Price * item.Count).ToString("c"))</span>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+                                    <div class="input-group input-group-sm cart-qty" style="width: 116px;">
+                                        <a asp-action="Minus" asp-route-cartId="@item.Id" class="btn btn-outline-secondary" type="button" aria-label="Decrease quantity">
+                                            <i class="bi bi-dash"></i>
+                                        </a>
+                                        <input type="number" class="form-control text-center fw-medium" value="@item.Count" min="1"
+                                               aria-label="Quantity" onchange="updateCart(@item.Id, this.value)" />
+                                        <a asp-action="Plus" asp-route-cartId="@item.Id" class="btn btn-outline-primary" type="button" aria-label="Increase quantity">
+                                            <i class="bi bi-plus"></i>
+                                        </a>
+                                    </div>
+
+                                    <a asp-action="Remove" asp-route-cartId="@item.Id" type="button" class="btn btn-link btn-sm text-danger text-decoration-none p-0">
+                                        <i class="bi bi-trash me-1"></i>Remove
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- ====================== ADDRESS + SUMMARY ====================== -->
+    <form method="post" asp-action="Index" asp-controller="Cart" asp-area="Customer" class="col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <h2 class="h6 fw-bold mb-3">
+                    <i class="bi bi-file-person text-primary me-2 pt-3"></i>Name and Phone
+                </h2>
+                <div class="cart-address row g-3">
+                    <div class="col-sm-6">
+                        <label asp-for="OrderHeader.Name" class="form-label small text-secondary mb-1">Full Name</label>
+                        <input asp-for="OrderHeader.Name" type="text" class="form-control form-control-sm" id="FullName"
+                               placeholder="John Doe"/>
+                        <span asp-validation-for="OrderHeader.Name" class="text-danger" style="font-size: 0.65rem"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="OrderHeader.PhoneNumber" class="form-label small text-secondary mb-1" for="Phone">Phone</label>
+                        <input asp-for="OrderHeader.PhoneNumber" type="tel" class="form-control form-control-sm" id="Phone"
+                               placeholder="(123) 456-7890"/>
+                        <span asp-validation-for="OrderHeader.PhoneNumber" class="text-danger" style="font-size: 0.65rem"></span>
+                    </div>
+                </div>
+
+                <h2 class="h6 fw-bold mb-3 mt-4">
+                    <i class="bi bi-geo-alt text-primary me-2 pt-3"></i>Shipping Address
+                </h2>
+                <div class="cart-address row g-3">
+                    <div class="col-12">
+                        <label asp-for="OrderHeader.StreetAddress" class="form-label small text-secondary mb-1" for="StreetAddress">Street Address</label>
+                        <input asp-for="OrderHeader.StreetAddress" type="text" class="form-control form-control-sm" id="StreetAddress"
+                               placeholder="123 Main St"/>
+                        <span asp-validation-for="OrderHeader.StreetAddress" class="text-danger" style="font-size: 0.65rem"></span>
+                    </div>
+                    <div class="col-sm-5">
+                        <label asp-for="OrderHeader.City" class="form-label small text-secondary mb-1" for="City">City</label>
+                        <input asp-for="OrderHeader.City" type="text" class="form-control form-control-sm" id="City"
+                               placeholder="New York"/>
+                        <span asp-validation-for="OrderHeader.City" class="text-danger" style="font-size: 0.65rem"></span>
+                    </div>
+                    <div class="col-sm-3">
+                        <label asp-for="OrderHeader.State" class="form-label small text-secondary mb-1" for="State">State</label>
+                        <input asp-for="OrderHeader.State" type="text" class="form-control form-control-sm" id="State"
+                               placeholder="NY"/>
+                        <span asp-validation-for="OrderHeader.State" class="text-danger" style="font-size: 0.65rem"></span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label asp-for="OrderHeader.PostalCode" class="form-label small text-secondary mb-1">Zip Code</label>
+                        <input asp-for="OrderHeader.PostalCode" type="text" class="form-control form-control-sm" id="ZipCode"
+                               placeholder="10001"/>
+                        <span asp-validation-for="OrderHeader.PostalCode" class="text-danger" style="font-size: 0.65rem"></span>
+                    </div>
+                </div>
+
+                <hr class="my-4"/>
+
+                <!-- Order summary -->
+                <h2 class="h6 fw-bold mb-3">
+                    <i class="bi bi-receipt text-primary me-2"></i>Order Summary
+                </h2>
+
+                @foreach (var item in Model.ShoppingCartList)
+                {
+                    <div class="d-flex justify-content-between small mb-2">
+                        <span class="text-secondary">@item.Product.Title &times; @item.Count</span>
+                        <span class="fw-medium">@((item.Price * item.Count).ToString("c"))</span>
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between small mb-3">
+                    <span class="text-secondary">Shipping</span>
+                    <span class="fw-medium text-success">Free</span>
+                </div>
+
+                <div class="cart-total d-flex justify-content-between align-items-center rounded-3 px-3 py-3 mb-3">
+                    <span class="text-uppercase small fw-semibold">Total</span>
+                    <span class="fs-5 fw-bold">@Model.OrderHeader.OrderTotal.ToString("c")</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mb-3">
+                    <i class="bi bi-bag-check me-2"></i>Place Order
+                </button>
+
+                <div class="d-flex flex-wrap justify-content-center gap-3 text-secondary small">
+                    <span><i class="bi bi-shield-check me-1"></i>Secure</span>
+                    <span><i class="bi bi-truck me-1"></i>Free Shipping</span>
+                    <span><i class="bi bi-arrow-counterclockwise me-1"></i>Returns</span>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function updateCart(cartId, count) {
+            fetch('/Customer/Cart/UpdateCart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'cartId=' + cartId + '&count=' + count
+            }).then((response) => {
+                if (response.ok) window.location.reload();
+            });
+        }
+    </script>
+    <partial name="_ValidationScriptsPartial"/>
+}

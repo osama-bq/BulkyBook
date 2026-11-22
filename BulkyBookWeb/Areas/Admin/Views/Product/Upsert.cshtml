@@ -1,0 +1,112 @@
+@using BulkyBook.Models.ViewModels
+@model ProductVM
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <h1 class="fw-bold mb-0">
+        @(Model.Product.Id == 0 ? "Create Product" : "Edit Product")
+    </h1>
+    <a asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+        <i class="bi bi-arrow-left me-1"></i> Back to List
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        <form method="post" asp-controller="Product" asp-action="Upsert" enctype="multipart/form-data">
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div asp-validation-summary="All" class="text-danger small mb-3"></div>
+                    <input asp-for="Product.Id" type="hidden" />
+                    <input asp-for="Product.ImageUrl" type="hidden" />
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label asp-for="Product.Title" class="form-label fw-medium">Product Name</label>
+                            <input asp-for="Product.Title" class="form-control" placeholder="e.g. The Great Gatsby" />
+                            <span asp-validation-for="Product.Title" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Product.Description" class="form-label fw-medium">Description</label>
+                            <input asp-for="Product.Description" class="form-control"
+                                   placeholder="e.g. A classic American novel" />
+                            <span asp-validation-for="Product.Description" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="Product.ISBN" class="form-label fw-medium">ISBN</label>
+                            <input asp-for="Product.ISBN" class="form-control" placeholder="e.g. 978-0-7432-7356-5" />
+                            <span asp-validation-for="Product.ISBN" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="Product.Author" class="form-label fw-medium">Author</label>
+                            <input asp-for="Product.Author" class="form-control"
+                                   placeholder="e.g. F. Scott Fitzgerald" />
+                            <span asp-validation-for="Product.Author" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="border rounded p-3 mt-3 bg-light">
+                        <p class="text-uppercase fw-semibold text-secondary mb-3">Pricing</p>
+                        <div class="row g-3">
+                            <div class="col-6 col-md-3">
+                                <label asp-for="Product.ListPrice" class="form-label fw-medium">List Price</label>
+                                <input asp-for="Product.ListPrice" class="form-control" />
+                                <span asp-validation-for="Product.ListPrice" class="text-danger small"></span>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <label asp-for="Product.Price" class="form-label fw-medium">Price for 1-50</label>
+                                <input asp-for="Product.Price" class="form-control" />
+                                <span asp-validation-for="Product.Price" class="text-danger small"></span>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <label asp-for="Product.Price50" class="form-label fw-medium">Price for 50+</label>
+                                <input asp-for="Product.Price50" class="form-control" />
+                                <span asp-validation-for="Product.Price50" class="text-danger small"></span>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <label asp-for="Product.Price100" class="form-label fw-medium">Price for 100+</label>
+                                <input asp-for="Product.Price100" class="form-control" />
+                                <span asp-validation-for="Product.Price100" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <label asp-for="Product.CategoryId" class="form-label fw-medium">Category</label>
+                            <select asp-for="Product.CategoryId" class="form-select" asp-items="@Model.CategoryList">
+                                <option disabled selected value="">Select a category</option>
+                            </select>
+                            <span asp-validation-for="Product.CategoryId" class="text-danger small"></span>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-semibold">Product Image</label>
+                            <div class="border border-2 border-dashed rounded p-4 text-center">
+                                <i class="bi bi-cloud-upload fs-4 text-secondary mb-2"></i>
+                                <input type="file" name="file" class="form-control form-control-sm" />
+                                <p class="text-secondary mt-1 mb-0">Upload your product image here (JPG, PNG)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <!--image-->
+                    <div class="border rounded p-3 mt-3 bg-light">
+                        <p class="text-uppercase fw-semibold text-secondary mb-3">Image Preview</p>
+                        <div class="text-center">
+                            <img id="imagePreview" src="@Model.Product.ImageUrl" alt="Product Image"
+                                 class="img-fluid rounded" style="max-height: 300px;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        <i class="bi bi-check-lg me-1"></i> @(Model.Product.Id == 0 ? "Create" : "Update")
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+}
