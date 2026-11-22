@@ -476,9 +476,22 @@ body.admin-body {
   border-color: var(--bb-primary);
 }
 
-.cart-total {
+.cart-total,
+.order-total {
   background:
     radial-gradient(ellipse 70% 140% at 90% 0%, rgba(79, 70, 229, 0.45), transparent 65%),
     var(--bb-ink);
   color: #fff;
+}
+
+/* ============================================================
+   Admin order details
+   ============================================================ */
+.order-section-label {
+  margin-bottom: 1.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--bb-text-muted);
 }

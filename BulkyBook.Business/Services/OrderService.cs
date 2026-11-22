@@ -37,7 +37,7 @@ public class OrderService : IOrderService
         return await query.FirstOrDefaultAsync(u => u.Id == id);
     }
 
-    public async Task<IEnumerable<OrderHeader>> GerAllOrderAsync(string? userId, string? status = null, bool includeUser = false,
+    public async Task<IEnumerable<OrderHeader>> GetAllOrderAsync(string? userId = null, string? status = null, bool includeUser = false,
         bool includeDetails = false)
     {
         var query = _context.OrderHeaders.AsQueryable();
@@ -56,9 +56,9 @@ public class OrderService : IOrderService
             query = query.Where(u => u.ApplicationUserId == userId);
         }
         
-        if (!string.IsNullOrEmpty(status))
+        if (!string.IsNullOrEmpty(status) && status.ToLower() != "all")
         {
-            query = query.Where(u => u.OrderStatus == status);
+            query = query.Where(u => u.OrderStatus.ToLower() == status.ToLower());
         }
 
         return await query.ToListAsync();
