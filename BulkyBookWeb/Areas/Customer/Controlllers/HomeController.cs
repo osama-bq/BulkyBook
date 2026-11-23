@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using BulkyBook.Business.Services.IServices;
 using BulkyBook.Models;
+using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -56,6 +57,9 @@ namespace BulkyBook.Controllers
             shoppingCart.ApplicationUserId = userId;
 
             await _shoppingCartService.AddToCartAsync(shoppingCart);
+
+            var count = await _shoppingCartService.GetCartCountAsync(userId);
+            HttpContext.Session.SetInt32(SD.SessionCart, count);
             TempData["success"] = "Item added to cart";
             return RedirectToAction("Index");
         }

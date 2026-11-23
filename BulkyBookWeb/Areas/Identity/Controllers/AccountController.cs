@@ -1,3 +1,4 @@
+using BulkyBook.Business.Services.IServices;
 using BulkyBook.Models;
 using BulkyBook.Models.ViewModels;
 using BulkyBook.Utility;
@@ -14,12 +15,14 @@ namespace BulkyBook.Areas.Identity.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IShoppingCartService _shoppingCartService;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,  RoleManager<IdentityRole> roleManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,  RoleManager<IdentityRole> roleManager, IShoppingCartService shoppingCartService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _shoppingCartService = shoppingCartService;
         }
         public IActionResult Login(string? returnUrl = null)
         {
@@ -36,6 +39,12 @@ namespace BulkyBook.Areas.Identity.Controllers
                 var result = await _signInManager.PasswordSignInAsync(loginVM.Email, loginVM.Password, loginVM.RememberMe, false);
                 if (result.Succeeded)
                 {
+                    var user = await _userManager.FindByEmailAsync(loginVM.Email);
+                    if (user != null)
+                    {
+                        var count = await _shoppingCartService.GetCartCountAsync(user.Id);
+                        HttpContext.Session.SetInt32(SD.SessionCart, count);
+                    }
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         return Redirect(returnUrl);
@@ -102,6 +111,7 @@ namespace BulkyBook.Areas.Identity.Controllers
                         await _userManager.AddToRoleAsync(user, SD.RoleCustomer);
                     }
                     await _signInManager.SignInAsync(user, false);
+                    HttpContext.Session.SetInt32(SD.SessionCart, 0);
                     
                     return RedirectToAction("Index", "Home", new { area = "Customer" });
                 }
@@ -122,6 +132,7 @@ namespace BulkyBook.Areas.Identity.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
+            HttpContext.Session.SetInt32(SD.SessionCart, 0);
             return RedirectToAction("Index", "Home", new { area = "Customer" });
         }
     }

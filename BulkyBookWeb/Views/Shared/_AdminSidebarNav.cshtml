@@ -39,7 +39,8 @@
                 </a>
 
                 <p class="admin-section-label">Management</p>
-                <a class="nav-link" href="#">
+                <a class="nav-link @(currentController == "User" ? "active" : "")"
+                   asp-area="Admin" asp-controller="User" asp-action="Index">
                     <i class="bi bi-people"></i> Users
                 </a>
             </nav>
