@@ -12,12 +12,14 @@ namespace BulkyBook.Controllers
     public class CartController : Controller
     {
         private readonly IOrderService _orderService;
+        private readonly IEmailService _emailService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IApplicationUserService _applicationUserService;
 
-        public CartController(IOrderService orderService, IShoppingCartService shoppingCartService, IApplicationUserService applicationUserService)
+        public CartController(IOrderService orderService, IEmailService emailService, IShoppingCartService shoppingCartService, IApplicationUserService applicationUserService)
         {
             _orderService = orderService;
+            _emailService = emailService;
             _shoppingCartService = shoppingCartService;
             _applicationUserService = applicationUserService;
         }
@@ -88,6 +90,9 @@ namespace BulkyBook.Controllers
             }).ToList();
             
             await _orderService.CreateOrderAsync(shoppingCartVM.OrderHeader);
+            var user = await _applicationUserService.GetUserByIdAsync(userId);
+            await _emailService.SendOrderConfirmationEmailAsync(user.Email,
+                shoppingCartVM.OrderHeader.Id, (decimal)shoppingCartVM.OrderHeader.OrderTotal);
             return RedirectToAction("OrderConfirmation", new { id = shoppingCartVM.OrderHeader.Id });
         }
         
@@ -171,3 +176,6 @@ namespace BulkyBook.Controllers
         }
     }
 }
+
+// 95a87b1b5a7645d484c1383a2d33ad0d
+// 2cb1c8ee813f2cc6715116f6a73d0b98
