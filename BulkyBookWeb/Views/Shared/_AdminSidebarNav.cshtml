@@ -20,13 +20,13 @@
 
             <nav class="nav flex-column admin-nav px-3">
                 <p class="admin-section-label">Overview</p>
-                <a class="nav-link" href="#">
+                <a class="nav-link" asp-area="Admin" asp-controller="Order" asp-action="Index">
                     <i class="bi bi-graph-up"></i> Dashboard
                 </a>
 
                 <p class="admin-section-label">Commerce</p>
                 <a class="nav-link @(currentController == "Order" ? "active" : "")"
-                   asp-area="Admin" asp-controller="Order" asp-action="Index">
+                   asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
                     <i class="bi bi-bag"></i> Orders
                 </a>
                 <a class="nav-link @(currentController == "Product" ? "active" : "")"
