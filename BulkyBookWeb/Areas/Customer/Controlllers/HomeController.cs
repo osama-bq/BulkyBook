@@ -24,9 +24,9 @@ namespace BulkyBook.Controllers
             return View(products);
         }
         
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int productId)
         {
-            var product = await _productService.GetProductByIdAsync(id, includeCategory: true);
+            var product = await _productService.GetProductByIdAsync(productId, includeCategory: true);
 
             if (product == null)
             {
@@ -37,7 +37,7 @@ namespace BulkyBook.Controllers
             {
                 Product = product,
                 Count = 1,
-                ProductId = id
+                ProductId = productId
             };
             return View(cart);
         }

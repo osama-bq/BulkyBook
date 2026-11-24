@@ -21,11 +21,6 @@
     @if (Model.Any())
     {
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
-            <!-- ==============================================================
-            CATALOG PLACEHOLDER
-            Replace this single sample card with your Razor loop.
-            Each iteration should render one <div class="col">...</div>.
-            ============================================================== -->
             @foreach (var product in Model)
             {
                 <div class="col">
@@ -54,13 +49,12 @@
                                         <small class="text-decoration-line-through text-muted ms-1">@product.ListPrice.ToString("c")</small>
                                     }
                                 </div>
-                                <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-sm btn-outline-primary rounded-pill px-3">View</a>
+                                <a asp-action="Details" asp-route-productId="@product.Id" class="btn btn-sm btn-outline-primary rounded-pill px-3">View</a>
                             </div>
                         </div>
                     </div>
                 </div>
             }
-            <!-- ========================== END PLACEHOLDER ========================== -->
         </div>
     }
 </section>

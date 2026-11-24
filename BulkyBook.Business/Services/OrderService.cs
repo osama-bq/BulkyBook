@@ -2,6 +2,7 @@ using BulkyBook.DataAccess.Data;
 using BulkyBook.Models;
 using BulkyBook.Utility;
 using Microsoft.EntityFrameworkCore;
+using Stripe.Checkout;
 
 namespace BulkyBook.Business.Services.IServices;
 
@@ -104,16 +105,84 @@ public class OrderService : IOrderService
             throw new KeyNotFoundException($"Order {orderId} not found");
         }
 
-        if (string.IsNullOrEmpty(sessionId))
+        if (!string.IsNullOrEmpty(sessionId))
         {
             order.SessionId = sessionId;
         }
         
-        if (string.IsNullOrEmpty(paymentIntentId))
+        if (!string.IsNullOrEmpty(paymentIntentId))
         {
             order.PaymentIntentId = paymentIntentId;
         }
         
         await _context.SaveChangesAsync();
+    }
+
+    public Task<bool> CancelOrderWithRefundAsync(int orderId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<string> CreateStripeCheckoutSessionAsync(OrderHeader orderHeader, IEnumerable<ShoppingCart> cartItems, string domain)
+    {
+        if (orderHeader == null)
+        {
+            throw new ArgumentNullException(nameof(orderHeader));
+        }
+
+        if (cartItems == null || !cartItems.Any())
+        {
+            throw new ArgumentException("Cart items cannot be null or empty", nameof(cartItems));
+        }
+        
+        var options = new Stripe.Checkout.SessionCreateOptions
+        {
+            SuccessUrl = domain + $"/customer/cart/OrderConfirmation?id={orderHeader.Id}",
+            CancelUrl = domain + "/customer/cart/index",
+            LineItems = new List<SessionLineItemOptions>(),
+            Mode = "payment",
+            Metadata = new Dictionary<string, string>
+            {
+                { "OrderId", orderHeader.Id.ToString() },
+            }
+        };
+
+        foreach (var item in cartItems)
+        {
+            var sessionLineItem = new SessionLineItemOptions
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    UnitAmount = (long)(item.Price * 100),
+                    Currency = "usd",
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = item.Product.Title
+                    }
+                },
+                Quantity = item.Count,
+            };
+            options.LineItems.Add(sessionLineItem);
+        }
+        var service = new SessionService();
+        Session session = service.Create(options);
+        await UpdateStripePaymentAsync(orderHeader.Id, session.Id, session.PaymentIntentId);
+        return session.Url;
+    }
+
+    public async Task<bool> VerifyStripePaymentAsync(OrderHeader orderHeader)
+    {
+        var service = new SessionService();
+        Session session = service.Get(orderHeader.SessionId);
+        if (session.PaymentStatus.ToLower() == "paid")
+        {
+            await UpdateStripePaymentAsync(orderHeader.Id, session.Id, session.PaymentIntentId);
+            await UpdateOrderStatusAsync(orderHeader.Id, SD.StatusApproved);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
