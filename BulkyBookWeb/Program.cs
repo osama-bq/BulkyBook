@@ -2,8 +2,12 @@ using BulkyBook.DataAccess.Data;
 using BulkyBook.Business.Services;
 using Microsoft.EntityFrameworkCore;
 using BulkyBook.Business.Services.IServices;
+using BulkyBook.DataAccess.DBInitializer;
 using BulkyBook.Models;
 using Microsoft.AspNetCore.Identity;
+using Stripe;
+using OrderService = BulkyBook.Business.Services.IServices.OrderService;
+using ProductService = BulkyBook.Business.Services.ProductService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +28,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     options.Password.RequiredUniqueChars = 1;
 }).AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddScoped<IDBInitializer, DBInitializer>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
@@ -57,6 +62,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
+
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseSession();
@@ -65,6 +72,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+await SeedDatabase();
 
 app.MapControllerRoute(
     name: "MyArea",
@@ -78,3 +87,12 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 app.Run();
+
+async Task SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDBInitializer>();
+        await dbInitializer.InitializeAsync();
+    }
+}

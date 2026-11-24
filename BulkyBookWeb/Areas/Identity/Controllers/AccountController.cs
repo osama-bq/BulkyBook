@@ -63,15 +63,22 @@ namespace BulkyBook.Areas.Identity.Controllers
 
         public IActionResult Register(string? returnUrl = null)
         {
-            var model = new RegisterVM()
+            var model = new RegisterVM();
+
+            if (User.IsInRole(SD.RoleAdmin))
             {
-                RoleList =
+                model.RoleList =
                 [
                     new SelectListItem() { Text = SD.RoleCustomer, Value = SD.RoleCustomer },
                     new SelectListItem() { Text = SD.RoleAdmin, Value = SD.RoleAdmin },
                     new SelectListItem() { Text = SD.RoleEmployee, Value = SD.RoleEmployee }
-                ]
-            };
+                ];
+            }
+            else
+            {
+                model.RoleList = new List<SelectListItem>();
+            }
+            
             ViewData["ReturnUrl"] = returnUrl;
             return View(model);
         }
@@ -107,18 +114,22 @@ namespace BulkyBook.Areas.Identity.Controllers
                     {
                         return Redirect(returnUrl);
                     }
-                    if (!string.IsNullOrEmpty(registerVM.Role))
+                    
+                    if (User.IsInRole(SD.RoleAdmin) && !string.IsNullOrEmpty(registerVM.Role))
                     {
                         await _userManager.AddToRoleAsync(user, registerVM.Role);
+                        TempData["success"] = $"User {user.Name} created successfully!";
+                        return RedirectToAction("Index", "User", new { area = "Admin" });
                     }
                     else
                     {
                         await _userManager.AddToRoleAsync(user, SD.RoleCustomer);
-                    }
-                    await _signInManager.SignInAsync(user, false);
-                    HttpContext.Session.SetInt32(SD.SessionCart, 0);
+                        
+                        await _signInManager.SignInAsync(user, false);
+                        HttpContext.Session.SetInt32(SD.SessionCart, 0);
                     
-                    return RedirectToAction("Index", "Home", new { area = "Customer" });
+                        return RedirectToAction("Index", "Home", new { area = "Customer" });
+                    }
                 }
 
                 foreach (var error in result.Errors)
