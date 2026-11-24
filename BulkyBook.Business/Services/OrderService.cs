@@ -2,6 +2,7 @@ using BulkyBook.DataAccess.Data;
 using BulkyBook.Models;
 using BulkyBook.Utility;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using Stripe.Checkout;
 
 namespace BulkyBook.Business.Services.IServices;
@@ -118,9 +119,55 @@ public class OrderService : IOrderService
         await _context.SaveChangesAsync();
     }
 
-    public Task<bool> CancelOrderWithRefundAsync(int orderId)
+    public async Task<bool> CancelOrderWithRefundAsync(int orderId)
     {
-        throw new NotImplementedException();
+        var order = await _context.OrderHeaders.FindAsync(orderId);
+        if (order == null)
+        {
+            throw new KeyNotFoundException($"Order {orderId} not found");
+        }
+
+        if (order.OrderStatus == SD.StatusShipped)
+        {
+            throw new InvalidOperationException("Cannot cancel orders that have already been shipped. Customer must initiate a return instead.");
+        }
+
+        if (order.OrderStatus == SD.StatusCancelled || order.OrderStatus == SD.StatusRefunded)
+        {
+            throw new InvalidOperationException("This order has already been cancelled.");
+        }
+
+        bool refundIssued = false;
+        if (!string.IsNullOrEmpty(order.PaymentIntentId) &&
+            (order.OrderStatus == SD.StatusApproved ||
+             order.OrderStatus == SD.StatusProcessing))
+        {
+            try
+            {
+                var options = new RefundCreateOptions { PaymentIntent = order.PaymentIntentId, Reason = RefundReasons.RequestedByCustomer };
+                var service = new RefundService();
+                Refund refund = service.Create(options);
+
+                if (refund.Status == "succeeded" || refund.Status == "pending")
+                {
+                    refundIssued = true;
+                    order.OrderStatus = SD.StatusRefunded;
+                }
+            }
+            catch (StripeException e)
+            {
+                order.OrderStatus = SD.StatusCancelled;
+                await _context.SaveChangesAsync();
+                throw new InvalidOperationException($"Stripe refund failed: {e.Message}. Order has been cancelled, but refund must be processed");
+            }
+        }
+        else
+        {
+            order.OrderStatus = SD.StatusCancelled;
+        }
+
+        await _context.SaveChangesAsync();
+        return refundIssued;
     }
 
     public async Task<string> CreateStripeCheckoutSessionAsync(OrderHeader orderHeader, IEnumerable<ShoppingCart> cartItems, string domain)

@@ -6,6 +6,7 @@ using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Stripe;
 
 namespace BulkyBook.Controllers
 {
@@ -84,12 +85,30 @@ namespace BulkyBook.Controllers
                     successMessage = "Order processing started successfully";
                     break;
                 case SD.StatusCancelled:
-                    await _orderService.UpdateOrderStatusAsync(OrderHeader.Id, status);
-                    successMessage = "Order cancelled successfully";
-                    break;
                 case SD.StatusRefunded:
-                    await _orderService.UpdateOrderStatusAsync(OrderHeader.Id, status);
-                    successMessage = "Order refunded successfully";
+                    try
+                    {
+                        bool refundIssued = await _orderService.CancelOrderWithRefundAsync(OrderHeader.Id);
+                        if (refundIssued)
+                        {
+                            successMessage =
+                                "Order cancelled and refund issued successfully. Funds will be returned to customer within 5-10 business days.";
+                        }
+                        else
+                        {
+                            successMessage = "Order cancelled successfully. (No payment was processed)";
+                        }
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        TempData["error"] = e.Message;
+                        return RedirectToAction(nameof(Details), new { orderId = orderHeader.Id });
+                    }
+                    catch (StripeException e)
+                    {
+                        TempData["error"] = $"Order cancelled but refund failed: {e.Message}. Please process refund manually in Stripe Dashboard.";
+                        return RedirectToAction("Details", new { orderId = orderHeader.Id });
+                    }
                     break;
                 case SD.StatusShipped:
 
