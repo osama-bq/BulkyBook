@@ -197,7 +197,7 @@ namespace BulkyBook.Controllers
                 return NotFound();
             }
 
-            if (count <= 1)
+            if (count < 1)
             {
                 count = 0;
             }

@@ -147,7 +147,7 @@ namespace BulkyBook.Controllers
                     return Unauthorized();
                 }
             }
-            var orders = await _orderService.GetAllOrderAsync(userId, status);
+            var orders = await _orderService.GetAllOrderAsync(userId, status, includeUser: true);
             return Json(new { data = orders });
         }
         

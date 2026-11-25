@@ -39,7 +39,7 @@ namespace BulkyBook.Business.Services
 
         public async Task UpdateCategoryAsync(Category category)
         {
-            _context.Categories.Add(category);
+            _context.Categories.Update(category);
             await _context.SaveChangesAsync();
         }
 

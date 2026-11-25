@@ -14,16 +14,18 @@
     <div class="card-body p-4">
         <form method="post" asp-controller="Category" asp-action="Update">
             <div asp-validation-summary="All" class="text-danger small mb-3"></div>
+            
+            <input type="hidden" asp-for="Id" />
 
             <div class="mb-3">
                 <label asp-for="Name" class="form-label fw-medium">Category Name</label>
-                <input name="Name" asp-for="Name" class="form-control" placeholder="e.g. Fiction" />
+                <input asp-for="Name" class="form-control" placeholder="e.g. Fiction" />
                 <span asp-validation-for="Name" class="text-danger small"></span>
             </div>
 
             <div class="mb-4">
                 <label asp-for="DisplayOrder" class="form-label fw-medium">Display Order</label>
-                <input type="number" name="DisplayOrder" asp-for="DisplayOrder" class="form-control"
+                <input type="number" asp-for="DisplayOrder" class="form-control"
                        placeholder="e.g. 1" />
                 <span asp-validation-for="DisplayOrder" class="text-danger small"></span>
             </div>

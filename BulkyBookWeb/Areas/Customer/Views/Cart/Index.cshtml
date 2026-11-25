@@ -51,7 +51,7 @@
                             <div class="flex-grow-1">
                                 <div class="d-flex justify-content-between align-items-start gap-3">
                                     <div>
-                                        <a href="#" class="fw-semibold text-decoration-none text-dark">@item.Product.Title</a>
+                                        <a asp-action="Details" asp-controller="Home" asp-route-productId="@item.Product.Id" class="fw-semibold text-decoration-none text-dark">@item.Product.Title</a>
                                         <p class="text-secondary small mb-0">
                                             by @item.Product.Author
                                             <span class="text-muted mx-1">&middot;</span>
@@ -162,7 +162,7 @@
                     <span class="fs-5 fw-bold">@Model.OrderHeader.OrderTotal.ToString("c")</span>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mb-3">
+                <button @(Model.ShoppingCartList.Count() == 0? "disabled" : "") type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mb-3">
                     <i class="bi bi-bag-check me-2"></i>Place Order
                 </button>
 

@@ -12,7 +12,7 @@
 
         <div class="offcanvas-body d-flex flex-column flex-grow-1 p-0">
             <a class="admin-brand d-flex align-items-center gap-2 px-4 py-4 text-decoration-none"
-               asp-area="Admin" asp-controller="Product" asp-action="Index">
+               asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
                 <i class="bi bi-book-half fs-4"></i>
                 <span class="fs-5 fw-bold text-white">BulkyBook</span>
                 <span class="admin-badge">Admin</span>
@@ -20,13 +20,13 @@
 
             <nav class="nav flex-column admin-nav px-3">
                 <p class="admin-section-label">Overview</p>
-                <a class="nav-link" asp-area="Admin" asp-controller="Order" asp-action="Index">
+                <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
                     <i class="bi bi-graph-up"></i> Dashboard
                 </a>
 
                 <p class="admin-section-label">Commerce</p>
                 <a class="nav-link @(currentController == "Order" ? "active" : "")"
-                   asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                   asp-area="Admin" asp-controller="Order" asp-action="Index">
                     <i class="bi bi-bag"></i> Orders
                 </a>
                 <a class="nav-link @(currentController == "Product" ? "active" : "")"

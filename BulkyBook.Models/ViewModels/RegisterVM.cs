@@ -17,6 +17,7 @@ namespace BulkyBook.Models.ViewModels
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
+        [Compare(nameof(Password))]
         public string ConfirmPassword { get; set; }
         
         [Required]
